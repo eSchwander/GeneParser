@@ -6,6 +6,7 @@ from lib.gene_stats import GeneStats
 # Declaring file paths for later usage
 input_path = "./input"
 output_path = "./output"
+processed_path = './processed'
 old_summary_file = output_path + "/summary.csv"
 new_summary_file = output_path + '/new_summary.csv'
 
@@ -14,16 +15,18 @@ input_files = []
 for root, dirs, files in os.walk(input_path):
     for f in files:
         if f.endswith(".csv"):
-            input_files.append(root + "/" + f)
+            input_files.append((root, f))
 
 # Main loop
-for file in input_files:
+for path, input_file in input_files:
+
     # Gene map to be used later
     genes = {}
     totals = GeneStats("TOTAL")
 
     # Read input sheet
-    sheet = Sheet(file, PEAK="AGGREGATE")
+    input_file_path = path + "/" + input_file
+    sheet = Sheet(input_file_path, PEAK="AGGREGATE")
 
     # Go through input rows and store gene info
     for row in sheet.rows:
@@ -93,3 +96,6 @@ for file in input_files:
     if old_summary_file.split("/")[-1] in os.listdir(output_path):
         os.remove(old_summary_file)
     os.rename(new_summary_file, old_summary_file)
+
+    # Move input file elsewhere
+    os.rename(input_file_path, processed_path + "/" + input_file)
