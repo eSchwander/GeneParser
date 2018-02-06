@@ -1,7 +1,7 @@
-import os
 import csv
-from sheet import Sheet
-from gene_stats import GeneStats
+import os
+from lib.sheet import Sheet
+from lib.gene_stats import GeneStats
 
 # Declaring file paths for later usage
 input_path = "./input"
