@@ -7,6 +7,8 @@ class Sheet:
             self.sheet = sheet
 
         def get_value(self, column_name):
+            if column_name not in self.sheet.headers:
+                return ""
             index = self.sheet.headers[column_name]
             return self.row[index]
 
@@ -37,3 +39,8 @@ class Sheet:
 
     def get_row(self, row_num):
         return self.rows[row_num]
+
+
+class OutputSheet:
+    def __init__(self, headers):
+        self.headers = headers
