@@ -93,6 +93,3 @@ for file in input_files:
     if old_summary_file.split("/")[-1] in os.listdir(output_path):
         os.remove(old_summary_file)
     os.rename(new_summary_file, old_summary_file)
-
-
-

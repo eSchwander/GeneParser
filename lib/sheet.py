@@ -13,6 +13,7 @@ class Sheet:
             return self.row[index]
 
     def __init__(self, file_path, **filter):
+        self.sheet_name = file_path.split("/")[-1]
         self.filter = filter
         self.rows = []
         self.headers = {}
