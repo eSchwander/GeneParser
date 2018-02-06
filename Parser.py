@@ -1,10 +1,17 @@
 import os
+import numpy
 from Sheet import Sheet
+
 
 class Gene_Stats:
     def __init__(self, name):
         self.name = name
-        self.values = {"BEG":[], "MID":[], "END":[], "WHOLE":[]}
+        self.values = {"BEG": [], "MID": [], "END": []}
+        self.means = {"BEG": 0, "MID": 0, "END": 0}
+
+    def find_means(self):
+        for k in self.values:
+            self.means[k] = numpy.mean(self.values[k])
 
 
 input_path = "./input"
@@ -17,6 +24,7 @@ for root, dirs, files in os.walk(input_path):
 print(input_files)
 
 genes = {}
+totals = Gene_Stats("Totals")
 
 for file in input_files:
     sheet = Sheet(file, PEAK="AGGREGATE")
@@ -24,8 +32,24 @@ for file in input_files:
         gene_name = row.get_value("#GENE")
         int_type = row.get_value("INTTYPE")
         odds_ratio = row.get_value("ODDSRATIO")
-        if gene_name not in genes:
-            genes[gene_name] = Gene_Stats(gene_name)
-        genes[gene_name].values[int_type].append(odds_ratio)
+        if int_type != "WHOLE":
+            if gene_name not in genes:
+                genes[gene_name] = Gene_Stats(gene_name)
+            genes[gene_name].values[int_type].append(float(odds_ratio))
 
-print("End?")
+for gene_name in genes:
+    gene = genes[gene_name]
+    gene.find_means()
+    for mean in gene.means:
+        totals.values[mean].append(gene.means[mean])
+
+totals.find_means()
+
+summary_headers = []
+for name in genes:
+    summary_headers.append(name + "_BEG")
+    summary_headers.append(name + "_MID")
+    summary_headers.append(name + "_END")
+summary_headers.append("TOTAL_BEG")
+summary_headers.append("TOTAL_MID")
+summary_headers.append("TOTAL_END")
