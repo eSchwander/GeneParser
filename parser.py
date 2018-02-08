@@ -93,6 +93,7 @@ for path, input_file in input_files:
         # Build row for summary file
         new_summary_row = []
         for header in new_summary_headers:
+            value = ""
             if header == Sheet.source_file_header:
                 value = sheet_name
             else:
@@ -100,8 +101,6 @@ for path, input_file in input_files:
                 bme = header.split("_")[1]
                 if gene_name in genes:
                     value = genes[gene_name].means[bme]
-                else:
-                    value = ""
             new_summary_row.append(value)
 
         # Write row to summary file
