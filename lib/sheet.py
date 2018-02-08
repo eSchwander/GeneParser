@@ -1,5 +1,15 @@
 import csv
 
+
+def get_delimiter(file_path):
+    if file_path.endswith(".csv"):
+        return ","
+    elif file_path.endswith(".tsv"):
+        return "\t"
+    else:
+        return ","
+
+
 class Sheet:
     class Row:
         def __init__(self, sheet, row):
@@ -12,27 +22,31 @@ class Sheet:
             index = self.sheet.headers[column_name]
             return self.row[index]
 
+        def __len__(self):
+            return len(self.row)
+
     def __init__(self, file_path, **filter):
         self.sheet_name = file_path.split("/")[-1]
         self.filter = filter
         self.rows = []
         self.headers = {}
         with open(file_path) as file:
-            reader = csv.reader(file)
+            delimiter = get_delimiter(file_path)
+            reader = csv.reader(file, delimiter=delimiter)
             for i, row in enumerate(reader):
                 if i == 0:
                     self.set_headers(row)
                 else:
-                    self.filter_row(row)
+                    self.add_row(row)
 
-    def filter_row(self, row):
+    def add_row(self, row):
         temp_row = self.Row(self, row)
-        add_row = True
+        if len(self.headers) != len(temp_row):
+            return
         for k in self.filter:
             if temp_row.get_value(k) != self.filter[k]:
-                add_row = False
-        if add_row:
-            self.rows.append(temp_row)
+                return
+        self.rows.append(temp_row)
 
     def set_headers(self, first_row):
         for i, c in enumerate(first_row):

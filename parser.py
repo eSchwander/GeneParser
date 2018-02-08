@@ -4,6 +4,7 @@ from lib.sheet import Sheet
 from lib.gene_stats import GeneStats
 
 # Declaring file paths for later usage
+file_types = ["csv", "tsv"]
 input_path = "./input"
 output_path = "./output"
 processed_path = './processed'
@@ -14,7 +15,8 @@ new_summary_file = output_path + '/new_summary.csv'
 input_files = []
 for root, dirs, files in os.walk(input_path):
     for f in files:
-        if f.endswith(".csv"):
+        extension = f.split(".")[-1]
+        if extension in file_types:
             input_files.append((root, f))
 
 # Main loop
