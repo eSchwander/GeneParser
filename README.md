@@ -1,3 +1,3 @@
 # GeneParser
 
-Requires three folders in the directory it lives in. Those folders are input, processed, and output.
+Make a folder called "input" and place any input files you have in there. Run parser.py. Enjoy.
