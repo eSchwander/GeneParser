@@ -11,10 +11,12 @@ def get_delimiter(file_path):
 
 
 class Sheet:
+    source_file_header = "SOURCEFILE"
+
     class Row:
         def __init__(self, sheet, row):
-            self.row = row
             self.sheet = sheet
+            self.row = row
 
         def get_value(self, column_name):
             if column_name not in self.sheet.headers:
@@ -54,8 +56,3 @@ class Sheet:
 
     def get_row(self, row_num):
         return self.rows[row_num]
-
-
-class OutputSheet:
-    def __init__(self, headers):
-        self.headers = headers

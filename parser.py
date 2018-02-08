@@ -8,27 +8,35 @@ file_types = ["csv", "tsv"]
 input_path = "./input"
 output_path = "./output"
 processed_path = './processed'
+required_folders = ["input", "output", "processed"]
 old_summary_file = output_path + "/summary.csv"
 new_summary_file = output_path + '/new_summary.csv'
 
+# Create required directories if they do not exist
+root, dirs, _ = next(os.walk("./"))
+for required_folder in required_folders:
+    if required_folder not in dirs:
+        os.makedirs(root + "/" + required_folder)
+
 # Reading in input files
 input_files = []
-for root, dirs, files in os.walk(input_path):
-    for f in files:
-        extension = f.split(".")[-1]
-        if extension in file_types:
-            input_files.append((root, f))
+root, dirs, files = next(os.walk(input_path))
+for f in files:
+    extension = f.split(".")[-1]
+    if extension in file_types:
+        input_files.append((root, f))
 
 # Main loop
 for path, input_file in input_files:
 
-    # Gene map to be used later
+    # Important variables for later use
     genes = {}
     totals = GeneStats("TOTAL")
 
     # Read input sheet
     input_file_path = path + "/" + input_file
     sheet = Sheet(input_file_path, PEAK="AGGREGATE")
+    sheet_name = sheet.sheet_name
 
     # Go through input rows and store gene info
     for row in sheet.rows:
@@ -53,7 +61,7 @@ for path, input_file in input_files:
     genes["TOTAL"] = totals
 
     # Determining new headers
-    new_summary_headers = []
+    new_summary_headers = [Sheet.source_file_header]
     for name in genes:
         new_summary_headers.append(name + "_BEG")
         new_summary_headers.append(name + "_MID")
@@ -82,16 +90,21 @@ for path, input_file in input_files:
                     row_to_write.append(row.get_value(header))
                 writer.writerow(row_to_write)
 
-        # Write new info to the summary file
+        # Build row for summary file
         new_summary_row = []
         for header in new_summary_headers:
-            gene_name = header.split("_")[0]
-            bme = header.split("_")[1]
-            if gene_name in genes:
-                value = genes[gene_name].means[bme]
+            if header == Sheet.source_file_header:
+                value = sheet_name
             else:
-                value = ""
+                gene_name = header.split("_")[0]
+                bme = header.split("_")[1]
+                if gene_name in genes:
+                    value = genes[gene_name].means[bme]
+                else:
+                    value = ""
             new_summary_row.append(value)
+
+        # Write row to summary file
         writer.writerow(new_summary_row)
 
     # Remove old file if it exists and rename new file
