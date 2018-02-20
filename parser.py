@@ -43,10 +43,9 @@ for path, input_file in input_files:
         gene_name = row.get_value("#GENE")
         int_type = row.get_value("INTTYPE")
         odds_ratio = row.get_value("ODDSRATIO")
-        if int_type != "WHOLE":
-            if gene_name not in genes:
-                genes[gene_name] = GeneStats(gene_name)
-            genes[gene_name].values[int_type].append(float(odds_ratio))
+        if gene_name not in genes:
+            genes[gene_name] = GeneStats(gene_name)
+        genes[gene_name].values[int_type].append(float(odds_ratio))
 
     # Calculate mean values for each gene
     for gene_name in genes:
@@ -66,6 +65,7 @@ for path, input_file in input_files:
         new_summary_headers.append(name + "_BEG")
         new_summary_headers.append(name + "_MID")
         new_summary_headers.append(name + "_END")
+        new_summary_headers.append(name + "_WHOLE")
 
     # If an old summary sheet exists, add old headers to new headers and create Sheet to be used later
     old_sheet = None
