@@ -43,10 +43,16 @@ for path, input_file in input_files:
         gene_name = row.get_value("#GENE")
         int_type = row.get_value("INTTYPE")
         odds_ratio = row.get_value("ODDSRATIO")
-        if gene_name not in genes:
-            genes[gene_name] = GeneStats(gene_name)
-        genes[gene_name].values[int_type].append(float(odds_ratio))
-
+        strand = row.get_value("STRAND")
+        window = row.get_value("WINDOW")
+        threshold = row.get_value("THRESHOLD")
+        convtype = row.get_value("CONVTYPE")
+        #only look at high quality, strand specific conversions
+        if ((strand == "Pos" and convtype == "CH") or (strand == "Neg" and convtype == "GH")) and \
+               (window == "20" and threshold == "0.65"):
+            if gene_name not in genes:
+                genes[gene_name] = GeneStats(gene_name)
+            genes[gene_name].values[int_type].append(float(odds_ratio))
     # Calculate mean values for each gene
     for gene_name in genes:
         gene = genes[gene_name]
